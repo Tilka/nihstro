@@ -251,24 +251,24 @@ int main(int argc, char *argv[])
                 std::cout << ", " << (swizzle.negate_src2 ? "-" : "") + shader_info.LookupSourceName(src2, 0);
 
             std::cout << std::endl;
-        } else if (opcode.GetInfo().type == OpCode::Type::Conditional) {
-            std::cout << "if ";
+        } else if (opcode.GetInfo().type == OpCode::Type::Conditional ||
+                opcode.GetInfo().type == OpCode::Type::UniformFlowControl) {
 
             if (opcode.GetInfo().subtype & OpCode::Info::HasCondition) {
+                std::cout << "if ";
                 const char* ops[] = {
-                    " || ", " && ", "", ""
+                    "|| ", "&& ", "", ""
                 };
                 if (instr.flow_control.op != instr.flow_control.JustY)
-                    std::cout << ((!instr.flow_control.refx) ? "!" : " ") << "cc.x";
+                    std::cout << ((!instr.flow_control.refx) ? "!" : " ") << "cc.x ";
 
                 std::cout << ops[instr.flow_control.op];
 
                 if (instr.flow_control.op != instr.flow_control.JustX)
-                    std::cout << ((!instr.flow_control.refy) ? "!" : " ") << "cc.y";
+                    std::cout << ((!instr.flow_control.refy) ? "!" : " ") << "cc.y ";
 
-                std::cout << " ";
             } else if (opcode.GetInfo().subtype & OpCode::Info::HasUniformIndex) {
-                std::cout << "b" << instr.flow_control.bool_uniform_id << " ";
+                std::cout << "if b" << instr.flow_control.bool_uniform_id << " ";
             }
 
             uint32_t target_addr = instr.flow_control.dest_offset;
@@ -276,16 +276,14 @@ int main(int argc, char *argv[])
 
             if (opcode.GetInfo().subtype & OpCode::Info::HasAlternative) {
                 std::cout << "else jump to 0x" << std::setw(4) << std::right << std::setfill('0') << 4 * instr.flow_control.dest_offset
-                          << " aka \"" << shader_info.GetLabel(instr.flow_control.dest_offset) << "\"";
+                          << " aka \"" << shader_info.GetLabel(instr.flow_control.dest_offset) << "\" ";
             } else if (opcode.GetInfo().subtype & OpCode::Info::HasExplicitDest) {
                 std::cout << "jump to 0x" << std::setw(4) << std::right << std::setfill('0') << 4 * instr.flow_control.dest_offset
-                          << " aka \"" << shader_info.GetLabel(instr.flow_control.dest_offset) << "\"";
-            } else {
-                // TODO: Handle other cases
+                          << " aka \"" << shader_info.GetLabel(instr.flow_control.dest_offset) << "\" ";
             }
 
             if (opcode.GetInfo().subtype & OpCode::Info::HasFinishPoint) {
-                std::cout << "(return on " << std::setw(4) << std::right << std::setfill('0') << 4 * instr.flow_control.dest_offset + 4 * instr.flow_control.num_instructions << "\")";
+                std::cout << "(return on " << std::setw(4) << std::right << std::setfill('0') << 4 * instr.flow_control.dest_offset + 4 * instr.flow_control.num_instructions << ")";
             }
 
             std::cout << std::endl;

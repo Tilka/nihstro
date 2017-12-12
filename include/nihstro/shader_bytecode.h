@@ -425,7 +425,7 @@ struct OpCode {
             { OpCode::Type::Trivial, 0, "emit" },
             { OpCode::Type::SetEmit, 0, "setemit" },
             { OpCode::Type::Conditional, OpCode::Info::JMPC, "jmpc" },
-            { OpCode::Type::Conditional, OpCode::Info::JMPU, "jmpu" },
+            { OpCode::Type::UniformFlowControl, OpCode::Info::JMPU, "jmpu" },
             { OpCode::Type::Arithmetic, OpCode::Info::Compare, "cmp" },
             { OpCode::Type::Arithmetic, OpCode::Info::Compare, "cmp" },
             { OpCode::Type::MultiplyAdd, OpCode::Info::SrcInversed, "madi" },
